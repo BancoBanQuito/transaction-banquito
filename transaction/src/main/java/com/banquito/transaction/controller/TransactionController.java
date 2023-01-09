@@ -28,4 +28,9 @@ public class TransactionController {
         }
         return ResponseEntity.ok(transactionList);
     }
+
+    @RequestMapping(value = "/deposit", method = RequestMethod.POST)
+    public Object deposit() {
+        return "Deposit Success";
+    }
 }
