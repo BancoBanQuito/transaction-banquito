@@ -15,7 +15,7 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-    public TransactionController(TransactionService transactionService){
+    public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
 
@@ -32,5 +32,10 @@ public class TransactionController {
     @RequestMapping(value = "/deposit", method = RequestMethod.POST)
     public Object deposit() {
         return "Deposit Success";
+    }
+
+    @RequestMapping(value = "/interest ", method = RequestMethod.POST)
+    public Object interest() {
+        return "View Interest";
     }
 }
