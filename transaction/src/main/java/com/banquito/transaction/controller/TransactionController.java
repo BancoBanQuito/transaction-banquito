@@ -31,27 +31,27 @@ public class TransactionController {
 
     @RequestMapping(value = "/deposit", method = RequestMethod.POST)
     public Object deposit() {
-        return "Deposit Success";
+        return ResponseEntity.status(200).body("Deposit created");
     }
 
     @RequestMapping(value = "/interest", method = RequestMethod.POST)
     public Object interest() {
-        return "Interest Success";
+        return ResponseEntity.status(200).body("Interest created");
     }
 
     @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
     public Object withdraw() {
-        return "Bank Withdrawal Success";
+        return ResponseEntity.status(200).body("Withdraw created");
     }
 
     @RequestMapping(value = "/transfer", method = RequestMethod.POST)
     public Object transfer() {
-        return "Transfer Success";
+        return ResponseEntity.status(200).body("Transfer created");
     }
 
     @RequestMapping(value = "/payment", method = RequestMethod.POST)
     public Object payment() {
-        return "Payment Success";
+        return ResponseEntity.status(200).body("Payment created");
     }
 
 }
