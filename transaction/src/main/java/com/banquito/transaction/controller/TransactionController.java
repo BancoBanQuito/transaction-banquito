@@ -34,6 +34,11 @@ public class TransactionController {
         return "Deposit Success";
     }
 
+    @RequestMapping(value = "/interest", method = RequestMethod.POST)
+    public Object interest() {
+        return "Interest Success";
+    }
+
     @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
     public Object withdraw() {
         return "Bank Withdrawal Success";
