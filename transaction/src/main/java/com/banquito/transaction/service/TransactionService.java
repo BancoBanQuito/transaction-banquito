@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +41,7 @@ public class TransactionService {
 
         String codeUniqueTransaction = BankUtils.RandomNumber.generateCode(64);
         Long numVersion = 0000000000L;
-        transaction.setCreateDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        transaction.setCreateDate(OffsetDateTime.now().toString());
 
         switch (retriveStatus(codeUniqueTransaction)) {
             case "ACTIVO": {
@@ -50,7 +49,7 @@ public class TransactionService {
                     throw new RSRuntimeException(this.INSUFFICIENT_BALANCE, RSCode.INSUFFICIENT_BALANCE);
                 } else if (retriveBalance(codeUniqueTransaction).compareTo(MINIMUM_VALUE) == 1) {
                     transaction.setStatus(TransactionStatusCode.SUCCESFUL.code);
-                    transaction.setExecuteDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+                    transaction.setExecuteDate(OffsetDateTime.now().toString());
                 }
                 break;
             }
@@ -91,7 +90,7 @@ public class TransactionService {
                     throw new RSRuntimeException(this.INSUFFICIENT_BALANCE, RSCode.INSUFFICIENT_BALANCE);
                 } else if (retriveBalance(transaction.getCodeUniqueTransaction()).compareTo(MINIMUM_VALUE) == 1) {
                     transaction.setStatus(TransactionStatusCode.SUCCESFUL.code);
-                    transaction.setExecuteDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+                    transaction.setExecuteDate(OffsetDateTime.now().toString());
                 }
                 break;
             }
@@ -107,30 +106,30 @@ public class TransactionService {
     }
 
     /**********************************/
-    private String retriveStatus(String codeAccount) {
+    private String retriveStatus(String codeLocalAccount) {
         String status = "ACTIVO";
         return status;
     }
 
-    private BigDecimal retriveBalance(String codeAccount) {
+    private BigDecimal retriveBalance(String codeLocalAccount) {
         BigDecimal present_balance = new BigDecimal(50);
         return present_balance;
     }
 
     /**********************************/
 
-    public List<RSCreateTransaction> findAllTransactionByClient(String codeAccount){
+    public List<RSCreateTransaction> findAllTransactionByClient(String codeLocalAccount){
         List<RSCreateTransaction> rsTransactions = new ArrayList<>();
         List<Transaction> transactions = new ArrayList<>();
 
-        transactions = this.transactionRepository.findByCodeAccount(codeAccount);
+        transactions = this.transactionRepository.findByCodeLocalAccount(codeLocalAccount);
         if(transactions.size() <= 0){
             throw new RSRuntimeException(this.NOT_FOUND_ACCOUNT, RSCode.NOT_FOUND);
         }
 
         try{
             transactions.forEach(transaction -> {
-                Optional<Transaction> optionalTransaction = this.transactionRepository.findById(codeAccount);
+                Optional<Transaction> optionalTransaction = this.transactionRepository.findById(codeLocalAccount);
                 if(optionalTransaction.isPresent()){
                     RSCreateTransaction rsTransaction = RSCreateTransaction.builder()
                         .movement(transaction.getMovement())
@@ -138,7 +137,7 @@ public class TransactionService {
                         .concept(transaction.getConcept())
                         .value(transaction.getValue())
                         .codeLocalAccount(transaction.getCodeLocalAccount())                    
-                        .codeUniqueTransaction(codeAccount)
+                        .codeUniqueTransaction(codeLocalAccount)
                         .executeDate(transaction.getExecuteDate())
                         .recipientAccountNumber(transaction.getRecipientAccountNumber())
                         .build(); 

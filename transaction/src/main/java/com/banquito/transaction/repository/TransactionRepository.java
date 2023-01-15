@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransactionRepository extends MongoRepository<Transaction, String> {
-    List<Transaction> findByCodeAccount(String codeAccount);
-    List<Transaction> findByDates(Timestamp startDate, Timestamp endDate);
-    
+    List<Transaction> findByCodeLocalAccount(String codeLocalAccount);
+    List<Transaction> findByExecuteDate(Timestamp startDate, Timestamp endDate);
 }
