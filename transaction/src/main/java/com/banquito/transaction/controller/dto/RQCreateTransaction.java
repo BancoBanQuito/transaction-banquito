@@ -14,6 +14,7 @@ public class RQCreateTransaction implements Serializable{
     private String concept; 
     private String descripcion; 
     private BigDecimal value; 
+    private String status; 
     private String codeInternationalAccount; 
     private String codeLocalAccount;
     private String recipientAccountNumber; 

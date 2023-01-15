@@ -39,9 +39,9 @@ public class TransactionController {
     }
 
     @PutMapping
-    public ResponseEntity<ResponseFormat> updateTransaction(@RequestBody Transaction transaction) {
+    public ResponseEntity<ResponseFormat> updateTransaction(@RequestBody RQCreateTransaction transaction) {
         try{
-            Transaction savedTransaction = transactionService.updateTransaction(transaction);
+            this.transactionService.updateTransaction(TransactionMapper.map(transaction));
             return ResponseEntity.status(RSCode.CREATED.code).body(ResponseFormat.builder().message("Success").data(transaction.getStatus()).build());
         } catch(RSRuntimeException e){
             return ResponseEntity.status(e.getCode()).body(ResponseFormat.builder().message("Failure").data(e.getMessage()).build());

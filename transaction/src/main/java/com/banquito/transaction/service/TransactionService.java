@@ -8,7 +8,7 @@ import com.banquito.transaction.errors.RSRuntimeException;
 import com.banquito.transaction.model.Transaction;
 import com.banquito.transaction.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -83,7 +83,8 @@ public class TransactionService {
         return transaction;
     }
 
-    public Transaction updateTransaction(Transaction transaction){
+    @Transactional
+    public void updateTransaction(Transaction transaction){
         switch (retriveStatus(transaction.getCodeUniqueTransaction())) {
             case "ACTIVO": {
                 if (retriveBalance(transaction.getCodeUniqueTransaction()).compareTo(MINIMUM_VALUE) == -1) {
@@ -103,7 +104,6 @@ public class TransactionService {
             default:
                 throw new RSRuntimeException(this.NOT_FOUND_ACCOUNT, RSCode.NOT_FOUND);
         }
-        return transaction;
     }
 
     /**********************************/
@@ -150,24 +150,5 @@ public class TransactionService {
         }
         return rsTransactions;
     }
-
-    private String getTransactionStatus(String status){
-        String response = null;
-        switch(status){
-            case "SUC":
-                response = TransactionStatusCode.SUCCESFUL.name;
-                break;
-            case "PEN":
-                response = TransactionStatusCode.PENDING.name;
-                break;
-            case "DEC":
-                response = TransactionStatusCode.DECLINED.name;
-                break;
-            default: 
-                response = null;
-        }
-        return response;
-    }
-
 
 }
