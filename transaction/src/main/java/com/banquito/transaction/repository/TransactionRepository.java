@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TransactionRepository extends MongoRepository<Transaction, String> {
     List<Transaction> findByCodeLocalAccount(String codeLocalAccount);
-    List<Transaction> findByExecuteDate(String startDate, String endDate);
+    List<Transaction> findByCodeLocalAccountAndExecuteDateBetween(String codeLocalAccount, String startDate, String endDate);
 }

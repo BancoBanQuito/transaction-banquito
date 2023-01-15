@@ -9,16 +9,14 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "transaction")
-public class Transaction implements Serializable{
+@Document(collection = "transactions")
+public class Transaction{
 
     @Id
     private String id;

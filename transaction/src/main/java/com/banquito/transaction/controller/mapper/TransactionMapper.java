@@ -17,7 +17,6 @@ public class TransactionMapper {
         .recipientAccountNumber(transaction.getRecipientAccountNumber())
         .recipientBank(transaction.getRecipientBank())
         .recipientType(transaction.getRecipientType())
-        .codeUniqueTransaction(null)
         .build();
     }
 
