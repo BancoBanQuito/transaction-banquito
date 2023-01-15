@@ -11,9 +11,7 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Builder
 @Data
@@ -25,13 +23,15 @@ public class Transaction implements Serializable{
     @Id
     private String id;
 
+    private String movement; 
+    
     private String type;
 
     private String concept;
 
     private String description;
 
-    private Number value;
+    private BigDecimal value;
 
     private String status;
 

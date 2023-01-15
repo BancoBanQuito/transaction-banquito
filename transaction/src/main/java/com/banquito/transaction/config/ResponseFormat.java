@@ -1,5 +1,4 @@
-package com.banquito.config;
-
+package com.banquito.transaction.config;
 import java.io.Serializable;
 
 import lombok.Builder;

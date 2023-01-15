@@ -7,6 +7,7 @@ import com.banquito.transaction.model.Transaction;
 public class TransactionMapper {
     public static Transaction map(RQCreateTransaction transaction){
         return Transaction.builder()
+        .movement(transaction.getMovement())
         .type(transaction.getType())
         .concept(transaction.getConcept())
         .description(transaction.getDescripcion())

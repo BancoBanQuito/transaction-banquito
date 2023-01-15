@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 public class RQCreateTransaction implements Serializable{
+    private String movement;
     private String type; 
     private String concept; 
     private String descripcion; 
