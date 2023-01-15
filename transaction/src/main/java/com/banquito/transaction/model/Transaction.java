@@ -7,15 +7,17 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.sql.Timestamp;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "transactions")
+@Document(collection = "transaction")
 public class Transaction {
 
     @Id
     private String id;
+
+    private String movement;
 
     private String type;
 
@@ -23,7 +25,9 @@ public class Transaction {
 
     private String description;
 
-    private Number value;
+    private BigDecimal value;
+
+    private String status;
 
     private String codeInternationalAccount;
 
@@ -31,18 +35,17 @@ public class Transaction {
 
     private String codeUniqueTransaction;
 
-    private Timestamp createDate;
+    private String createDate;
 
-    private Timestamp executeDate;
+    private String executeDate;
 
     private String recipientAccountNumber;
 
-    private String recipientType;
-
     private String recipientBank;
 
-    private String status;
+    private String recipientType;
 
     @Version
     private Long version;
+
 }
