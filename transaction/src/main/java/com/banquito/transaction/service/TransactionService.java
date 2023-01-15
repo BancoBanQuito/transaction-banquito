@@ -150,4 +150,26 @@ public class TransactionService {
         return rsTransactions;
     }
 
+    public List<RSCreateTransaction> findAllTransactionByDate(String codeLocalAccount, String startDate, String endDate){
+        List<RSCreateTransaction> rsTransactions = new ArrayList<>();
+        List<Transaction> transactions = new ArrayList<>();
+
+        transactions = this.transactionRepository.findByExecuteDate(startDate, endDate);
+        if(transactions.size() <= 0){
+            throw new RSRuntimeException(this.NOT_ENOUGH_PARAM, RSCode.NOT_FOUND);
+        }
+
+        try{
+            transactions.forEach(transaction -> {
+                Optional<Transaction> optionalTransaction = this.transactionRepository.findById(codeLocalAccount);
+                if(optionalTransaction.isPresent()){
+
+                }
+            });
+        } catch (Exception e){
+            throw new RSRuntimeException(this.INTERNAL_ERROR, RSCode.INTERNAL_ERROR_SERVER);
+        }
+        return rsTransactions; 
+    }
+
 }
