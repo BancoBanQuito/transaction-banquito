@@ -3,10 +3,9 @@ package com.banquito.transaction.service;
 import com.banquito.transaction.model.Transaction;
 import com.banquito.transaction.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class TransactionService {
@@ -17,28 +16,14 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public List<Transaction> findAll(){
-        return transactionRepository.findAll();
-    }
+    public void createTransaction(Transaction transaction){
+        /*Implementar un switch para los casos del estado:  exitoso, pendiente, rechazado*/
+        transaction.setStatus("exitoso");
+        transaction.setCodeUniqueTransaction(null);
+        transaction.setCreateDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
 
-    @Transactional
-    public void deposit() {
-    }
-
-    @Transactional
-    public void interest() {
-    }
-
-    @Transactional
-    public void withdraw() {
-    }
-
-    @Transactional
-    public void transfer() {
-    }
-
-    @Transactional
-    public void payment() {
+        transaction.setExecuteDate(null);
+        transaction.setVersion(null);
     }
 
 }
