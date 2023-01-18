@@ -1,8 +1,9 @@
 package com.banquito.transaction.controller;
 import com.banquito.transaction.config.RSCode;
 import com.banquito.transaction.config.ResponseFormat;
-import com.banquito.transaction.controller.dto.RQCreateTransaction;
-import com.banquito.transaction.controller.dto.RSCreateTransaction;
+import com.banquito.transaction.controller.dto.RQStatus;
+import com.banquito.transaction.controller.dto.RQTransaction;
+import com.banquito.transaction.controller.dto.RSTransaction;
 import com.banquito.transaction.controller.mapper.TransactionMapper;
 import com.banquito.transaction.errors.RSRuntimeException;
 import com.banquito.transaction.model.Transaction;
@@ -30,10 +31,10 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseFormat> createTransaction(@RequestBody RQCreateTransaction transaction) {
+    public ResponseEntity<ResponseFormat> createTransaction(@RequestBody RQTransaction transaction) {
         try{
             Transaction savedTransaction = transactionService.createTransaction(TransactionMapper.map(transaction));
-            RSCreateTransaction responseTransaction = TransactionMapper.map(savedTransaction);
+            RSTransaction responseTransaction = TransactionMapper.map(savedTransaction);
             return ResponseEntity.status(RSCode.CREATED.code).body(ResponseFormat.builder().message("Success").data(responseTransaction).build());
         } catch(RSRuntimeException e){
             return ResponseEntity.status(e.getCode()).body(ResponseFormat.builder().message("Failure").data(e.getMessage()).build());
@@ -42,10 +43,12 @@ public class TransactionController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseFormat> updateTransaction(@RequestBody RQCreateTransaction transaction) {
+    @PutMapping("/{codeUniqueTransaction}")
+    public ResponseEntity<ResponseFormat> updateTransaction(
+        @PathVariable("codeUniqueTransaction") String codeUniqueTransaction, 
+        @RequestBody RQStatus transactionStatus) {
         try{
-            this.transactionService.updateTransaction(TransactionMapper.map(transaction));
+            this.transactionService.updateTransaction(codeUniqueTransaction, transactionStatus.getStatus());
             return ResponseEntity.status(RSCode.CREATED.code).body(ResponseFormat.builder().message("Success").build());
         } catch(RSRuntimeException e){
             return ResponseEntity.status(e.getCode()).body(ResponseFormat.builder().message("Failure").data(e.getMessage()).build());
@@ -53,24 +56,6 @@ public class TransactionController {
             return ResponseEntity.status(500).body(ResponseFormat.builder().message("Failure").data(e.getMessage()).build());
         }
         
-    }
-
-    @GetMapping("/{codeLocalAccount}/{startDate}/{endDate}") 
-    public ResponseEntity<ResponseFormat> getByRangeDate(
-        @PathVariable("codeLocalAccount") String codeLocalAccount,
-        @PathVariable("startDate") String startDate,
-        @PathVariable("endDate") String endDate
-    ) {
-        try {
-            List<RSCreateTransaction> rsTransactions = this.transactionService.findAllTransactionByDate(codeLocalAccount, startDate, endDate);
-            return ResponseEntity.status(RSCode.SUCCESS.code).body(ResponseFormat.builder().message("Success").data(rsTransactions).build());
-        } catch (RSRuntimeException e) {
-            return ResponseEntity.status(e.getCode())
-                        .body(ResponseFormat.builder().message("Failure").data(e.getMessage()).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(500)
-                        .body(ResponseFormat.builder().message("Failure").data(e.getMessage()).build());
-        }
     }
 
 }

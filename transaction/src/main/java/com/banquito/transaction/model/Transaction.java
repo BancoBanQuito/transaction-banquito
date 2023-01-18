@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Builder
 @Data
@@ -39,9 +40,9 @@ public class Transaction{
 
     private String codeUniqueTransaction;
 
-    private String createDate;
+    private LocalDateTime createDate;
 
-    private String executeDate;
+    private LocalDateTime executeDate;
 
     private String recipientAccountNumber;
 

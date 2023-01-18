@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RSCreateTransaction{
+public class RSTransaction{
     private String codeUniqueTransaction;
-    
 }

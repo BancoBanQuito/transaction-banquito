@@ -1,11 +1,11 @@
 package com.banquito.transaction.controller.mapper;
 
-import com.banquito.transaction.controller.dto.RQCreateTransaction;
-import com.banquito.transaction.controller.dto.RSCreateTransaction;
+import com.banquito.transaction.controller.dto.RQTransaction;
+import com.banquito.transaction.controller.dto.RSTransaction;
 import com.banquito.transaction.model.Transaction;
 
 public class TransactionMapper {
-    public static Transaction map(RQCreateTransaction transaction){
+    public static Transaction map(RQTransaction transaction){
         return Transaction.builder()
         .movement(transaction.getMovement())
         .type(transaction.getType())
@@ -20,8 +20,8 @@ public class TransactionMapper {
         .build();
     }
 
-    public static RSCreateTransaction map(Transaction transaction){
-        return RSCreateTransaction.builder()
+    public static RSTransaction map(Transaction transaction){
+        return RSTransaction.builder()
         .codeUniqueTransaction(transaction.getCodeUniqueTransaction())
         .build();
     }
