@@ -1,6 +1,8 @@
 package com.banquito.transaction.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -8,11 +10,15 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@Builder
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "transaction")
-public class Transaction {
+@Document(collection = "transactions")
+public class Transaction{
 
     @Id
     private String id;
@@ -35,9 +41,9 @@ public class Transaction {
 
     private String codeUniqueTransaction;
 
-    private String createDate;
+    private LocalDateTime createDate;
 
-    private String executeDate;
+    private LocalDateTime executeDate;
 
     private String recipientAccountNumber;
 
@@ -45,7 +51,6 @@ public class Transaction {
 
     private String recipientType;
 
-    @Version
-    private Long version;
-
+    @Version 
+    private Long version; 
 }
