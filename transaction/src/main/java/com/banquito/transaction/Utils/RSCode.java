@@ -1,9 +1,9 @@
-package com.banquito.transaction.config;
+package com.banquito.transaction.Utils;
 
 public enum RSCode {
-    INTERNAL_ERROR_SERVER(500),
+    INTERNAL_SERVER_ERROR(500),
     NOT_FOUND(404),
-    INSUFFICIENT_BALANCE(400),
+    BAD_REQUEST(400),
     CREATED(201),
     SUCCESS(200);
 

@@ -33,6 +33,10 @@ public class Transaction{
 
     private BigDecimal value;
 
+    private BigDecimal presentBalance;
+
+    private BigDecimal availableBalance;
+
     private String status;
 
     private String codeInternationalAccount;

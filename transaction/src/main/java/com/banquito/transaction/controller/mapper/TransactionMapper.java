@@ -10,7 +10,7 @@ public class TransactionMapper {
         .movement(transaction.getMovement())
         .type(transaction.getType())
         .concept(transaction.getConcept())
-        .description(transaction.getDescripcion())
+        .description(transaction.getDescription())
         .value(transaction.getValue())
         .codeInternationalAccount(transaction.getCodeInternationalAccount())
         .codeLocalAccount(transaction.getCodeLocalAccount())

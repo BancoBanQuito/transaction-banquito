@@ -1,6 +1,6 @@
-package com.banquito.transaction.errors;
+package com.banquito.transaction.exception;
 
-import com.banquito.transaction.config.RSCode;
+import com.banquito.transaction.Utils.RSCode;
 
 public class RSRuntimeException extends RuntimeException{
     private RSCode code; 

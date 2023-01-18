@@ -10,13 +10,22 @@ import lombok.Data;
 @Builder
 public class RQTransaction implements Serializable{
     private String movement;
-    private String type; 
-    private String concept; 
-    private String descripcion; 
+
+    private String type;
+
+    private String concept;
+
+    private String description;
+
     private BigDecimal value;
-    private String codeInternationalAccount; 
+
+    private String codeInternationalAccount;
+
     private String codeLocalAccount;
-    private String recipientAccountNumber; 
+
+    private String recipientAccountNumber;
+
     private String recipientBank;
+
     private String recipientType;
 }

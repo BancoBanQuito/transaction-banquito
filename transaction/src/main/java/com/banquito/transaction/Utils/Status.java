@@ -1,15 +1,15 @@
-package com.banquito.transaction.config;
+package com.banquito.transaction.Utils;
 
-public enum TransactionStatusCode {
+public enum Status {
 
-    SUCCESFUL("SUC", "EXITOSO"), 
+    SUCCESSFUL("SUC", "EXITOSO"),
     PENDING("PEN", "PENDIENTE"),
     DECLINED("DEC", "RECHAZADA");
 
     public final String code; 
     public final String name;
     
-    TransactionStatusCode(String code, String name){
+    Status(String code, String name){
         this.code = code; 
         this.name = name; 
     }
