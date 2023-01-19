@@ -10,9 +10,13 @@ import com.banquito.transaction.controller.dto.RSTransaction;
 import com.banquito.transaction.controller.mapper.TransactionMapper;
 import com.banquito.transaction.exception.RSRuntimeException;
 import com.banquito.transaction.model.Transaction;
+import com.banquito.transaction.request.AccountRequest;
+import com.banquito.transaction.request.dto.RQAccountBalance;
 import com.banquito.transaction.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/transaction")
@@ -22,6 +26,24 @@ public class TransactionController {
 
     public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
+    }
+
+    //This method is only used for development purposes
+    @GetMapping(value = "/test")
+    public Object test(){
+        /*AccountRequest accountRequest = new AccountRequest();
+        return accountRequest.getAccountData("dfd4f80f8f90f1136512",
+                "0b6edacd6a13797a079335ca502335a3ad");*/
+
+
+        return AccountRequest.updateAccountBalance(
+                "dfd4f80f8f90f1136512",
+                "0b6edacd6a13797a079335ca502335a3ad",
+                RQAccountBalance.builder()
+                        .presentBalance(new BigDecimal(20))
+                        .availableBalance(new BigDecimal(20))
+                        .build()
+        );
     }
 
     @PostMapping

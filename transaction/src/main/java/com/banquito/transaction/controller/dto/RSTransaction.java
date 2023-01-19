@@ -6,18 +6,20 @@ import lombok.Data;
 @Builder
 public class RSTransaction{
 
-    private String codeInternationalAccount;
-
-    private String codeLocalAccount;
-
     private String codeUniqueTransaction;
 
     private String movement;
 
-    private String value;
+    private String codeInternationalAccount;
+
+    private String codeLocalAccount;
 
     private String executeDate;
 
+    private String value;
+
     private String presentBalance;
+
+    private String availableBalance;
 
 }

@@ -3,11 +3,13 @@ package com.banquito.transaction.service;
 import com.banquito.transaction.Utils.Messages;
 import com.banquito.transaction.Utils.Utils;
 import com.banquito.transaction.Utils.RSCode;
-import com.banquito.transaction.Utils.Status;
 import com.banquito.transaction.controller.dto.RSTransaction;
 import com.banquito.transaction.exception.RSRuntimeException;
 import com.banquito.transaction.model.Transaction;
 import com.banquito.transaction.repository.TransactionRepository;
+import com.banquito.transaction.request.AccountRequest;
+import com.banquito.transaction.request.dto.RQAccountBalance;
+import com.banquito.transaction.request.dto.RSAccount;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +24,6 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    private final BigDecimal MINIMUM_VALUE = new BigDecimal(10);
-
     public TransactionService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
@@ -31,26 +31,74 @@ public class TransactionService {
     @Transactional
     public Transaction createTransaction(Transaction transaction) {
 
+        BigDecimal newAvailableBalance;
+        BigDecimal newPresentBalance;
 
-        String codeUniqueTransaction = Utils.generateAlphanumericCode(64);
-        transaction.setCodeUniqueTransaction(codeUniqueTransaction);
         transaction.setCreateDate(Utils.currentDate());
 
-        if (retriveStatus(transaction.getCodeUniqueTransaction()).equals("ACTIVO")) {
-            if (retriveBalance(transaction.getCodeUniqueTransaction()).compareTo(MINIMUM_VALUE) == -1) {
-                throw new RSRuntimeException(Messages.INSUFFICIENT_BALANCE, RSCode.BAD_REQUEST);
-            } else if (retriveBalance(transaction.getCodeUniqueTransaction()).compareTo(MINIMUM_VALUE) == 1) {
-                transaction.setStatus(Status.SUCCESSFUL.code);
-                transaction.setExecuteDate(Utils.currentDate());
-            }
-        } else if (retriveBalance(transaction.getCodeUniqueTransaction()).equals("BLOQUEADA")) {
-            transaction.setStatus(Status.PENDING.code);
-        } else if (retriveBalance(transaction.getCodeUniqueTransaction()).equals("SUSPENDIDO")) {
-            transaction.setStatus(Status.DECLINED.code);
-        } else {
+        //Validate data
+        RSAccount account = AccountRequest
+                .getAccountData(transaction.getCodeLocalAccount(), transaction.getCodeInternationalAccount());
+
+        //Check if account exist
+        if(account == null){
             throw new RSRuntimeException(Messages.ACCOUNT_NOT_FOUND_BY_CODE, RSCode.NOT_FOUND);
         }
 
+        //Check if account is active
+        if(!account.getStatus().equals("ACT")){
+            throw new RSRuntimeException(Messages.ACCOUNT_NOT_ACTIVE, RSCode.FORBIDEN);
+        }
+
+        //Check movement Type
+        if(transaction.getMovement().equals("NOTA DEBITO")){
+
+            //Check if account has enough balance
+            if(transaction.getValue().compareTo(account.getAvailableBalance()) == 1){
+                throw new RSRuntimeException(Messages.INSUFFICIENT_BALANCE , RSCode.FORBIDEN);
+            }else {
+                BigDecimal difference = account.getAvailableBalance().subtract(transaction.getValue());
+                if(new BigDecimal(1).compareTo(difference) == 1){
+                    throw new RSRuntimeException(Messages.INSUFFICIENT_BALANCE , RSCode.FORBIDEN);
+                }
+            }
+
+            //Compute new balances
+            newAvailableBalance = account.getAvailableBalance().subtract(transaction.getValue());
+            newPresentBalance = account.getPresentBalance().subtract(transaction.getValue());
+
+        }else if(transaction.getMovement().equals("NOTA CREDITO")){
+
+            //Compute new balances
+            newAvailableBalance = account.getAvailableBalance().add(transaction.getValue());
+            newPresentBalance = account.getPresentBalance().add(transaction.getValue());
+
+        }else {
+            throw new RSRuntimeException(Messages.INVALID_MOVEMENT, RSCode.FORBIDEN);
+        }
+
+        //Send update request
+        Boolean update = AccountRequest.updateAccountBalance(
+                transaction.getCodeLocalAccount(),
+                transaction.getCodeInternationalAccount(),
+                RQAccountBalance.builder()
+                        .availableBalance(newAvailableBalance)
+                        .presentBalance(newPresentBalance)
+                        .build()
+        );
+
+        //Check if update was successful
+        if(!update){
+            throw new RSRuntimeException(Messages.TRANSACTION_NOT_CREATED, RSCode.INTERNAL_SERVER_ERROR);
+        }
+
+        //Set missing attributes
+        transaction.setCodeUniqueTransaction(Utils.generateAlphanumericCode(64));
+        transaction.setExecuteDate(Utils.currentDate());
+        transaction.setAvailableBalance(newAvailableBalance);
+        transaction.setPresentBalance(newPresentBalance);
+
+        //Save transaction
         try {
             this.transactionRepository.save(transaction);
         } catch (Exception e) {
@@ -65,7 +113,7 @@ public class TransactionService {
         Optional<Transaction> opTransaction = this.transactionRepository.findByCodeUniqueTransaction(codeUniqueTransaction);
 
         if(!opTransaction.isPresent()){
-            throw new RSRuntimeException(Messages.TRASACTION_NOT_FOUND_BY_CODE, RSCode.NOT_FOUND);
+            throw new RSRuntimeException(Messages.TRANSACTION_NOT_FOUND_BY_CODE, RSCode.NOT_FOUND);
         }
 
         Transaction transaction = opTransaction.get();
@@ -76,19 +124,6 @@ public class TransactionService {
             throw new RSRuntimeException(Messages.TRANSACTION_NOT_UPDATED, RSCode.INTERNAL_SERVER_ERROR);
         }
     }
-
-    /**********************************/
-    private String retriveStatus(String codeLocalAccount) {
-        String status = "ACTIVO";
-        return status;
-    }
-
-    private BigDecimal retriveBalance(String codeLocalAccount) {
-        BigDecimal present_balance = new BigDecimal(50);
-        return present_balance;
-    }
-
-    /**********************************/
 
     public List<RSTransaction> findAllTransactionByClient(String codeLocalAccount){
         List<RSTransaction> rsTransactions = new ArrayList<>();
