@@ -1,9 +1,11 @@
 package com.banquito.transaction.service;
 
 import com.banquito.transaction.Utils.Messages;
+import com.banquito.transaction.Utils.Status;
 import com.banquito.transaction.Utils.Utils;
 import com.banquito.transaction.Utils.RSCode;
 import com.banquito.transaction.controller.dto.RSTransaction;
+import com.banquito.transaction.controller.mapper.TransactionMapper;
 import com.banquito.transaction.exception.RSRuntimeException;
 import com.banquito.transaction.model.Transaction;
 import com.banquito.transaction.repository.TransactionRepository;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +39,17 @@ public class TransactionService {
 
         transaction.setCreateDate(Utils.currentDate());
 
-        //Validate data
+        //Check transaction type
+        if(!Utils.validTransactionType(transaction.getType())){
+            throw new RSRuntimeException(Messages.INVALID_TYPE, RSCode.FORBIDEN);
+        }
+
+        //Check recipient type
+        if(!Utils.validRecipientType(transaction.getRecipientType())){
+            throw new RSRuntimeException(Messages.INVALID_RECIPIENT_TYPE, RSCode.FORBIDEN);
+        }
+
+        //Get associated account
         RSAccount account = AccountRequest
                 .getAccountData(transaction.getCodeLocalAccount(), transaction.getCodeInternationalAccount());
 
@@ -95,6 +108,7 @@ public class TransactionService {
         //Set missing attributes
         transaction.setCodeUniqueTransaction(Utils.generateAlphanumericCode(64));
         transaction.setExecuteDate(Utils.currentDate());
+        transaction.setStatus(Status.SUCCESSFUL.name);
         transaction.setAvailableBalance(newAvailableBalance);
         transaction.setPresentBalance(newPresentBalance);
 
@@ -109,7 +123,11 @@ public class TransactionService {
     }
 
     @Transactional
-    public void updateTransaction(String codeUniqueTransaction, String newStatus){
+    public void updateTransactionStatus(String codeUniqueTransaction, String newStatus){
+        if(!Utils.validTransactionStatus(newStatus)){
+            throw new RSRuntimeException(Messages.INVALID_STATUS, RSCode.FORBIDEN);
+        }
+
         Optional<Transaction> opTransaction = this.transactionRepository.findByCodeUniqueTransaction(codeUniqueTransaction);
 
         if(!opTransaction.isPresent()){
@@ -125,30 +143,19 @@ public class TransactionService {
         }
     }
 
-    public List<RSTransaction> findAllTransactionByClient(String codeLocalAccount){
-        List<RSTransaction> rsTransactions = new ArrayList<>();
-        List<Transaction> transactions = new ArrayList<>();
+    public List<RSTransaction> getTransactionsBetweenDate(String codeLocalAccount, LocalDateTime from, LocalDateTime to){
+        List<Transaction> dbTransactions = transactionRepository.findByCodeLocalAccountAndExecuteDateBetween(
+                codeLocalAccount, from, to
+        );
 
-        transactions = this.transactionRepository.findByCodeLocalAccount(codeLocalAccount);
-        if(transactions.size() < 1){
-            throw new RSRuntimeException(Messages.ACCOUNT_NOT_FOUND_BY_CODE, RSCode.NOT_FOUND);
+        List<RSTransaction> transactions = new ArrayList<>();
+        RSTransaction transaction;
+
+        for(Transaction dbTransaction: dbTransactions){
+            transaction = TransactionMapper.map(dbTransaction);
+            transactions.add(transaction);
         }
 
-        try{
-            transactions.forEach(transaction -> {
-                Optional<Transaction> optionalTransaction = this.transactionRepository.findById(codeLocalAccount);
-                if(optionalTransaction.isPresent()){
-                    RSTransaction rsTransaction = RSTransaction.builder()                    
-                        .codeUniqueTransaction(codeLocalAccount)
-                        .build(); 
-                    rsTransactions.add(rsTransaction);
-                }
-            });
-        } catch (Exception e){
-            throw new RSRuntimeException(Messages.INTERNAL_ERROR, RSCode.INTERNAL_SERVER_ERROR);
-        }
-        return rsTransactions;
+        return transactions;
     }
-
-
 }

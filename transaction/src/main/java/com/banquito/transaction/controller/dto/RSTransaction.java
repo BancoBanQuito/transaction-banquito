@@ -2,6 +2,9 @@ package com.banquito.transaction.controller.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class RSTransaction{
@@ -10,16 +13,16 @@ public class RSTransaction{
 
     private String movement;
 
-    private String codeInternationalAccount;
-
     private String codeLocalAccount;
 
-    private String executeDate;
+    private String concept;
 
-    private String value;
+    private LocalDateTime executeDate;
 
-    private String presentBalance;
+    private BigDecimal value;
 
-    private String availableBalance;
+    private BigDecimal presentBalance;
+
+    private BigDecimal availableBalance;
 
 }

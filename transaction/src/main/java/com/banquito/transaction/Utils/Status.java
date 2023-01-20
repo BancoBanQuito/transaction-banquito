@@ -2,7 +2,7 @@ package com.banquito.transaction.Utils;
 
 public enum Status {
 
-    SUCCESSFUL("SUC", "EXITOSO"),
+    SUCCESSFUL("SUC", "EXITOSA"),
     PENDING("PEN", "PENDIENTE"),
     DECLINED("DEC", "RECHAZADA");
 

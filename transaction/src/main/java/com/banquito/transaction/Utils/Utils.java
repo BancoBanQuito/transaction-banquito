@@ -1,5 +1,8 @@
 package com.banquito.transaction.Utils;
 
+import com.banquito.transaction.controller.dto.RQTransaction;
+import com.banquito.transaction.controller.dto.RSTransaction;
+
 import java.lang.reflect.Field;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -49,7 +52,62 @@ public class Utils {
         return result;
     }
 
+    public static Boolean validRsTransaction(RQTransaction rsTransaction){
+        Boolean flag = true;
+
+        if(isNullEmpty(rsTransaction.getMovement())){
+            flag = false;
+        }else if(isNullEmpty(rsTransaction.getType())){
+            flag = false;
+        }else if(isNullEmpty(rsTransaction.getCodeLocalAccount())){
+            flag = false;
+        }else if(isNullEmpty(rsTransaction.getCodeInternationalAccount())){
+            flag = false;
+        }else if(isNullEmpty(rsTransaction.getConcept())){
+            flag = false;
+        } else if(isNullEmpty(rsTransaction.getValue())){
+            flag = false;
+        }
+
+        return flag;
+    }
+
     public static boolean isNullEmpty(Object value){
         return (value == null || value.toString().isEmpty());
+    }
+
+    public static boolean validTransactionType(String type){
+        boolean flag = false;
+
+        if(type.equals("DEPOSITO")
+                || type.equals("RETIRO")
+                || type.equals("PAGO")
+                || type.equals("TRANSFERENCIA")){
+            flag = true;
+        }
+
+        return flag;
+    }
+
+    public static Boolean validRecipientType(String type){
+        Boolean flag = false;
+
+        if(type.isEmpty() || type.equals("ORDENANTE") || type.equals("BENEFICIARIO")){
+            flag = true;
+        }
+
+        return flag;
+    }
+
+    public static Boolean validTransactionStatus(String status){
+        Boolean flag = false;
+
+        if(status.equals("EXITOSA")
+                || status.equals("PENDIENTE")
+                || status.equals("RECHAZADA")){
+            flag = true;
+        }
+
+        return flag;
     }
 }

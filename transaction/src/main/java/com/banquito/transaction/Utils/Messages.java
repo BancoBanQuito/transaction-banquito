@@ -9,6 +9,9 @@ public class Messages {
     public  static final String TRANSACTION_NOT_FOUND_BY_CODE = "No existe la transaccion";
     public static final String INSUFFICIENT_BALANCE = "Saldo insuficiente en cuenta ";
     public static final String INVALID_MOVEMENT = "Movimiento invalido";
+    public static final String INVALID_TYPE = "Tipo de transaccion invalida";
+    public static final String INVALID_STATUS = "Estatus de transaccion invalido";
+    public static final String INVALID_RECIPIENT_TYPE = "Tipo de recipiente invalido";
     public static final String MISSING_PARAMS = "Faltan parametros en la peticion";
     public static final String INTERNAL_ERROR = "Ha ocurrido un error";
 }

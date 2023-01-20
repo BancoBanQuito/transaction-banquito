@@ -10,7 +10,6 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -27,6 +26,12 @@ public class Transaction{
 
     private String type;
 
+    private String codeLocalAccount;
+
+    private String codeInternationalAccount;
+
+    private String codeUniqueTransaction;
+
     private String concept;
 
     private String description;
@@ -38,12 +43,6 @@ public class Transaction{
     private BigDecimal availableBalance;
 
     private String status;
-
-    private String codeInternationalAccount;
-
-    private String codeLocalAccount;
-
-    private String codeUniqueTransaction;
 
     private LocalDateTime createDate;
 
