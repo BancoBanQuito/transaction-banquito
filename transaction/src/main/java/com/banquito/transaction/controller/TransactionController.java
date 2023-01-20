@@ -6,18 +6,17 @@ import com.banquito.transaction.Utils.RSFormat;
 import com.banquito.transaction.Utils.Utils;
 import com.banquito.transaction.controller.dto.RQStatus;
 import com.banquito.transaction.controller.dto.RQTransaction;
-import com.banquito.transaction.controller.dto.RQTransactionBetween;
 import com.banquito.transaction.controller.dto.RSTransaction;
 import com.banquito.transaction.controller.mapper.TransactionMapper;
 import com.banquito.transaction.exception.RSRuntimeException;
 import com.banquito.transaction.model.Transaction;
 import com.banquito.transaction.request.AccountRequest;
-import com.banquito.transaction.request.dto.RQAccountBalance;
 import com.banquito.transaction.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -37,15 +36,16 @@ public class TransactionController {
         return accountRequest.getAccountData("dfd4f80f8f90f1136512",
                 "0b6edacd6a13797a079335ca502335a3ad");*/
 
-
-        return AccountRequest.updateAccountBalance(
+        /*return AccountRequest.updateAccountBalance(
                 "dfd4f80f8f90f1136512",
                 "0b6edacd6a13797a079335ca502335a3ad",
                 RQAccountBalance.builder()
                         .presentBalance(new BigDecimal(20))
                         .availableBalance(new BigDecimal(20))
                         .build()
-        );
+        );*/
+
+        return Utils.computeInterest(BigDecimal.valueOf(40.00), BigDecimal.valueOf(5.75));
     }
 
     @PostMapping
@@ -97,19 +97,19 @@ public class TransactionController {
         }
     }
 
-    @GetMapping("/{codeLocalAccount}")
+    @GetMapping("/{codeLocalAccount}/{from}/{to}")
     public ResponseEntity<RSFormat> getTransactionBetween(
             @PathVariable("codeLocalAccount") String codeLocalAccount,
-            @RequestBody RQTransactionBetween rqTransactionBetween) {
+            @PathVariable("from") LocalDateTime from,
+            @PathVariable("to") LocalDateTime to) {
         try{
 
-            if(!Utils.hasAllAttributes(rqTransactionBetween)||Utils.isNullEmpty(codeLocalAccount)){
+            if(Utils.isNullEmpty(codeLocalAccount)||Utils.isNullEmpty(from)||Utils.isNullEmpty(to)){
                 return ResponseEntity.status(RSCode.BAD_REQUEST.code)
                         .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
             }
 
-            List<RSTransaction> transactions = transactionService.getTransactionsBetweenDate(
-                    codeLocalAccount, rqTransactionBetween.getFrom(), rqTransactionBetween.getTo());
+            List<RSTransaction> transactions = transactionService.getTransactionsBetweenDate(codeLocalAccount, from, to);
 
             return ResponseEntity.status(RSCode.CREATED.code)
                     .body(RSFormat.builder().message("Success").data(transactions).build());

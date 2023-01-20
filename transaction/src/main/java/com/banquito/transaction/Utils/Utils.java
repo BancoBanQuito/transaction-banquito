@@ -3,9 +3,16 @@ package com.banquito.transaction.Utils;
 import com.banquito.transaction.controller.dto.RQTransaction;
 import com.banquito.transaction.controller.dto.RSTransaction;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Utils {
     private static final String numberString = "0123456789";
@@ -109,5 +116,39 @@ public class Utils {
         }
 
         return flag;
+    }
+
+    public static boolean saveLog(Object object, String codeLocalAccount){
+        try {
+            String date = currentDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+            String filename = date + codeLocalAccount + ".txt";
+            File file = new File("log/"+filename);
+            FileWriter fw = new FileWriter(file);
+            PrintWriter pw = new PrintWriter(fw);
+
+            String[] messages = object.toString().split(",");
+
+            for(String message: messages){
+                pw.println(message);
+            }
+
+            pw.close();
+            return true;
+        }catch (IOException e)  {
+            return false;
+        }
+    }
+
+    //EAR stands for Effective Annual Rate (Tasa efectiva anual)
+    //DR  stands for Daily Rate (Tasa diaria)
+    //Use double, becuase BigDecimal doesn't support power operation
+    public static BigDecimal computeInterest(BigDecimal balance, BigDecimal EAR){
+
+        Double base = 1d + EAR.doubleValue()/100d;
+
+        Double exponent = 1d/360d;
+
+        BigDecimal dr = balance.multiply(BigDecimal.valueOf(Math.pow(base, exponent) - 1d));
+        return dr.setScale(2, RoundingMode.HALF_EVEN);
     }
 }

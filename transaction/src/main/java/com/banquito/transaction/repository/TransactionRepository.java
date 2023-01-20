@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransactionRepository extends MongoRepository<Transaction, String> {
-    List<Transaction> findByCodeLocalAccount(String codeLocalAccount);
+
     Optional<Transaction> findByCodeUniqueTransaction(String codeUniqueTransaction);
     @Query("{'codeLocalAccount': ?0,'executeDate' : { $gt: ?1, $lt: ?2 } }")
     List<Transaction> findByCodeLocalAccountAndExecuteDateBetween(String name, LocalDateTime from, LocalDateTime to);

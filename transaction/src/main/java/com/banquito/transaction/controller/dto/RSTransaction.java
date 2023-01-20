@@ -1,13 +1,18 @@
 package com.banquito.transaction.controller.dto;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class RSTransaction{
+@AllArgsConstructor
+@NoArgsConstructor
+public class RSTransaction implements Serializable {
 
     private String codeUniqueTransaction;
 

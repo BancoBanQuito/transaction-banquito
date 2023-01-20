@@ -27,13 +27,13 @@ public class AccountRequest {
                 codeLocalAccount,
                 codeInternationalAccount);
 
-        if(response.getStatusCode().is2xxSuccessful()){
-            if(Utils.hasAllAttributes(response.getBody())){
-                return new ObjectMapper().convertValue(response.getBody().getData(),RSAccount.class);
-            }
-        }
+                if(response.getStatusCode().is2xxSuccessful()){
+                    if(Utils.hasAllAttributes(response.getBody())){
+                        return new ObjectMapper().convertValue(response.getBody().getData(),RSAccount.class);
+                    }
+                }
 
-        return null;
+                return null;
     }
 
     public static Boolean updateAccountBalance(String codeLocalAccount,

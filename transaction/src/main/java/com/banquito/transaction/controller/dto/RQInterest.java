@@ -5,16 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RQTransactionBetween implements Serializable {
+public class RQInterest {
 
-    LocalDateTime from;
+    private String codeLocalAccount;
 
-    LocalDateTime to;
+    private String codeInternationalAccount;
+
+    private BigDecimal ear;
+
+    private BigDecimal availableBalance;
+
 }
