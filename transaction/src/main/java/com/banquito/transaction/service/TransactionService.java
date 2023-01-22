@@ -32,7 +32,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction createTransaction(Transaction transaction) {
+    public RSTransaction createTransaction(Transaction transaction) {
 
         BigDecimal newAvailableBalance;
         BigDecimal newPresentBalance;
@@ -47,6 +47,11 @@ public class TransactionService {
         //Check recipient type
         if(!Utils.validRecipientType(transaction.getRecipientType())){
             throw new RSRuntimeException(Messages.INVALID_RECIPIENT_TYPE, RSCode.FORBIDEN);
+        }
+
+        //Check recipient bank type
+        if(!Utils.validRecipientBank(transaction.getRecipientBank())){
+            throw new RSRuntimeException(Messages.INVALID_BANK, RSCode.FORBIDEN);
         }
 
         //Get associated account
@@ -119,7 +124,7 @@ public class TransactionService {
             throw new RSRuntimeException(Messages.TRANSACTION_NOT_CREATED, RSCode.INTERNAL_SERVER_ERROR);
         }
 
-        return transaction;
+        return TransactionMapper.map(transaction);
     }
 
     @Transactional

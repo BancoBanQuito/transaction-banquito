@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RQInterest {
+public class RQSavingsAccountInterest {
 
     private String codeLocalAccount;
 

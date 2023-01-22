@@ -1,12 +1,12 @@
 package com.banquito.transaction.controller.mapper;
 
-import com.banquito.transaction.controller.dto.RQInterest;
-import com.banquito.transaction.controller.dto.RSInterest;
+import com.banquito.transaction.controller.dto.RQSavingsAccountInterest;
+import com.banquito.transaction.controller.dto.RSSavingsAccountInterest;
 import com.banquito.transaction.model.Interest;
 
 public class InterestMapper {
 
-    public static Interest map(RQInterest interest){
+    public static Interest map(RQSavingsAccountInterest interest){
 
         return Interest.builder()
                 .codeLocalAccount(interest.getCodeLocalAccount())
@@ -16,8 +16,8 @@ public class InterestMapper {
                 .build();
     }
 
-    public static RSInterest map(Interest interest){
-        return RSInterest.builder()
+    public static RSSavingsAccountInterest map(Interest interest){
+        return RSSavingsAccountInterest.builder()
                 .codeLocalAccount(interest.getCodeLocalAccount())
                 .codeInternationalAccount(interest.getCodeInternationalAccount())
                 .codeUniqueInterest(interest.getCodeUniqueInterest())

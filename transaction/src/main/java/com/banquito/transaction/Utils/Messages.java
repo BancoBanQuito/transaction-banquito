@@ -12,6 +12,7 @@ public class Messages {
     public static final String INVALID_TYPE = "Tipo de transaccion invalida";
     public static final String INVALID_STATUS = "Estatus de transaccion invalido";
     public static final String INVALID_RECIPIENT_TYPE = "Tipo de recipiente invalido";
+    public static final String INVALID_BANK = "Tipo de banco invalido";
     public static final String MISSING_PARAMS = "Faltan parametros en la peticion";
     public static final String INTEREST_NOT_CREATED = "No se pudo crear el interes";
     public static final String INTEREST_IS_TOO_LOW = "El interes es menor a 1 centavo";

@@ -9,8 +9,6 @@ import com.banquito.transaction.controller.dto.RQTransaction;
 import com.banquito.transaction.controller.dto.RSTransaction;
 import com.banquito.transaction.controller.mapper.TransactionMapper;
 import com.banquito.transaction.exception.RSRuntimeException;
-import com.banquito.transaction.model.Transaction;
-import com.banquito.transaction.request.AccountRequest;
 import com.banquito.transaction.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +43,9 @@ public class TransactionController {
                         .build()
         );*/
 
-        return Utils.computeInterest(BigDecimal.valueOf(40.00), BigDecimal.valueOf(5.75));
+        //return Utils.computeInterestSavingsAccount(BigDecimal.valueOf(40.00), BigDecimal.valueOf(5.75));
+
+        return Utils.computeInvestmentInterest(91, BigDecimal.valueOf(20000), BigDecimal.valueOf(2.52));
     }
 
     @PostMapping
@@ -57,10 +57,9 @@ public class TransactionController {
                         .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
             }
 
-            Transaction savedTransaction = transactionService.createTransaction(TransactionMapper.map(transaction));
-            RSTransaction responseTransaction = TransactionMapper.map(savedTransaction);
+            RSTransaction response = transactionService.createTransaction(TransactionMapper.map(transaction));
             return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data(responseTransaction).build());
+                    .body(RSFormat.builder().message("Success").data(response).build());
 
         } catch(RSRuntimeException e){
             return ResponseEntity.status(e.getCode())

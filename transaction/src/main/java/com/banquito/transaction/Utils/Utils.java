@@ -1,7 +1,6 @@
 package com.banquito.transaction.Utils;
 
 import com.banquito.transaction.controller.dto.RQTransaction;
-import com.banquito.transaction.controller.dto.RSTransaction;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -89,7 +88,8 @@ public class Utils {
         if(type.equals("DEPOSITO")
                 || type.equals("RETIRO")
                 || type.equals("PAGO")
-                || type.equals("TRANSFERENCIA")){
+                || type.equals("TRANSFERENCIA")
+                || type.equals("INTERES")){
             flag = true;
         }
 
@@ -100,6 +100,16 @@ public class Utils {
         Boolean flag = false;
 
         if(type.isEmpty() || type.equals("ORDENANTE") || type.equals("BENEFICIARIO")){
+            flag = true;
+        }
+
+        return flag;
+    }
+
+    public static Boolean validRecipientBank(String type){
+        Boolean flag = false;
+
+        if(type.isEmpty() || type.equals("BANQUITO")|| type.equals("BanQuito")||type.equals("banquito")){
             flag = true;
         }
 
@@ -142,7 +152,7 @@ public class Utils {
     //EAR stands for Effective Annual Rate (Tasa efectiva anual)
     //DR  stands for Daily Rate (Tasa diaria)
     //Use double, becuase BigDecimal doesn't support power operation
-    public static BigDecimal computeInterest(BigDecimal balance, BigDecimal EAR){
+    public static BigDecimal computeSavingsAccountInterest(BigDecimal balance, BigDecimal EAR){
 
         Double base = 1d + EAR.doubleValue()/100d;
 
@@ -150,5 +160,24 @@ public class Utils {
 
         BigDecimal dr = balance.multiply(BigDecimal.valueOf(Math.pow(base, exponent) - 1d));
         return dr.setScale(2, RoundingMode.HALF_EVEN);
+    }
+
+    public static InvesmentInterest computeInvestmentInterest(Integer days, BigDecimal capital, BigDecimal EAR){
+
+        BigDecimal rawInterest = capital.multiply(BigDecimal.valueOf(days)).multiply(EAR.divide(BigDecimal.valueOf(100))).divide(BigDecimal.valueOf(360));
+
+        BigDecimal roundRawInterest = rawInterest.setScale(2, RoundingMode.HALF_EVEN);
+
+        BigDecimal rawRetention = roundRawInterest.multiply(BigDecimal.valueOf(2).divide(BigDecimal.valueOf(100)));
+
+        BigDecimal roundRetention = rawRetention.setScale(2, RoundingMode.HALF_EVEN);
+
+        BigDecimal netInterest = roundRawInterest.subtract(roundRetention);
+
+        return InvesmentInterest.builder()
+                .rawInterest(roundRawInterest)
+                .retention(roundRetention)
+                .netInterest(netInterest)
+                .build();
     }
 }

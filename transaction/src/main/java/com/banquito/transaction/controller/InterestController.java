@@ -4,14 +4,16 @@ import com.banquito.transaction.Utils.Messages;
 import com.banquito.transaction.Utils.RSCode;
 import com.banquito.transaction.Utils.RSFormat;
 import com.banquito.transaction.Utils.Utils;
-import com.banquito.transaction.controller.dto.RQInterest;
-import com.banquito.transaction.controller.dto.RSInterest;
+import com.banquito.transaction.controller.dto.RQSavingsAccountInterest;
+import com.banquito.transaction.controller.dto.RSInvestmentInterest;
+import com.banquito.transaction.controller.dto.RSSavingsAccountInterest;
 import com.banquito.transaction.controller.mapper.InterestMapper;
 import com.banquito.transaction.exception.RSRuntimeException;
 import com.banquito.transaction.service.InterestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class InterestController {
     }
 
     @PostMapping
-    public ResponseEntity<RSFormat> createInterest(@RequestBody RQInterest interest) {
+    public ResponseEntity<RSFormat> createSavingsAccountInterest(@RequestBody RQSavingsAccountInterest interest) {
         try{
 
             if (!Utils.hasAllAttributes(interest)) {
@@ -34,10 +36,10 @@ public class InterestController {
                         .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
             }
 
-            interestService.createInterest(InterestMapper.map(interest));
+            RSSavingsAccountInterest response = interestService.createSavingsAccountInterest(InterestMapper.map(interest));
 
             return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data("Interes generado correctamente").build());
+                    .body(RSFormat.builder().message("Success").data(response).build());
 
         } catch(RSRuntimeException e){
             return ResponseEntity.status(e.getCode())
@@ -48,6 +50,8 @@ public class InterestController {
                     .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
         }
     }
+
+
 
     @GetMapping("/{codeLocalAccount}/{from}/{to}")
     public ResponseEntity<RSFormat> getTransactionBetween(
@@ -61,7 +65,7 @@ public class InterestController {
                         .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
             }
 
-            List<RSInterest> interests = interestService.getInterestBetweenDates(codeLocalAccount, from, to);
+            List<RSSavingsAccountInterest> interests = interestService.getInterestBetweenDates(codeLocalAccount, from, to);
 
             return ResponseEntity.status(RSCode.CREATED.code)
                     .body(RSFormat.builder().message("Success").data(interests).build());
@@ -76,5 +80,41 @@ public class InterestController {
         }
     }
 
+    @GetMapping("/{codeLocalAccount}/{days}/{capital}/{ear}")
+    public ResponseEntity<RSFormat> getInvestmentInterest(
+            @PathVariable("codeLocalAccount") String codeLocalAccount,
+            @PathVariable("days") Integer days,
+            @PathVariable("capital") BigDecimal capital,
+            @PathVariable("ear") BigDecimal ear) {
+        try{
+
+            if(Utils.isNullEmpty(codeLocalAccount)
+                    ||Utils.isNullEmpty(days)
+                    ||Utils.isNullEmpty(capital)
+                    ||Utils.isNullEmpty(ear)){
+
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code)
+                        .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
+            }
+
+            RSInvestmentInterest response = interestService.getInvestmentInterest(
+                    codeLocalAccount,
+                    days,
+                    capital,
+                    ear
+            );
+
+            return ResponseEntity.status(RSCode.CREATED.code)
+                    .body(RSFormat.builder().message("Success").data(response).build());
+
+        } catch(RSRuntimeException e){
+            return ResponseEntity.status(e.getCode())
+                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+
+        } catch (Exception e){
+            return ResponseEntity.status(500)
+                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+        }
+    }
 
 }

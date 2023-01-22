@@ -6,25 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RSInterest {
+public class RSInvestmentInterest {
 
     private String codeLocalAccount;
 
-    private String codeInternationalAccount;
+    private BigDecimal rawInterest;
 
-    private String codeUniqueInterest;
+    private BigDecimal retention;
 
-    private BigDecimal ear;
+    private BigDecimal netInterest;
 
-    private BigDecimal availableBalance;
-
-    private BigDecimal value;
-
-    private LocalDateTime executeDate;
 }

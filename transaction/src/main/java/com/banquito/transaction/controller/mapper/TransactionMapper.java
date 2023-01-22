@@ -1,9 +1,7 @@
 package com.banquito.transaction.controller.mapper;
 
 import com.banquito.transaction.controller.dto.RQTransaction;
-import com.banquito.transaction.controller.dto.RSInterest;
 import com.banquito.transaction.controller.dto.RSTransaction;
-import com.banquito.transaction.model.Interest;
 import com.banquito.transaction.model.Transaction;
 
 public class TransactionMapper {
@@ -27,6 +25,7 @@ public class TransactionMapper {
                 .codeUniqueTransaction(transaction.getCodeUniqueTransaction())
                 .movement(transaction.getMovement())
                 .codeLocalAccount(transaction.getCodeLocalAccount())
+                .type(transaction.getType())
                 .concept(transaction.getConcept())
                 .executeDate(transaction.getExecuteDate())
                 .value(transaction.getValue())

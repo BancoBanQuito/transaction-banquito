@@ -1,10 +1,10 @@
 package com.banquito.transaction.controller.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -12,24 +12,19 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RSTransaction implements Serializable {
-
-    private String codeUniqueTransaction;
-
-    private String movement;
+public class RSSavingsAccountInterest {
 
     private String codeLocalAccount;
 
-    private String type;
+    private String codeInternationalAccount;
 
-    private String concept;
+    private String codeUniqueInterest;
 
-    private LocalDateTime executeDate;
-
-    private BigDecimal value;
-
-    private BigDecimal presentBalance;
+    private BigDecimal ear;
 
     private BigDecimal availableBalance;
 
+    private BigDecimal value;
+
+    private LocalDateTime executeDate;
 }
