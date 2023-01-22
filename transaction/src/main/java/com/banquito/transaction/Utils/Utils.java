@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -130,9 +132,10 @@ public class Utils {
 
     public static boolean saveLog(Object object, String codeLocalAccount){
         try {
+            Files.createDirectories(Paths.get("../log/"));
             String date = currentDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-            String filename = date + codeLocalAccount + ".txt";
-            File file = new File("log/"+filename);
+            String filename = date + "_" + codeLocalAccount + ".txt";
+            File file = new File("../log/"+filename);
             FileWriter fw = new FileWriter(file);
             PrintWriter pw = new PrintWriter(fw);
 
@@ -164,11 +167,13 @@ public class Utils {
 
     public static InvesmentInterest computeInvestmentInterest(Integer days, BigDecimal capital, BigDecimal EAR){
 
-        BigDecimal rawInterest = capital.multiply(BigDecimal.valueOf(days)).multiply(EAR.divide(BigDecimal.valueOf(100))).divide(BigDecimal.valueOf(360));
+        BigDecimal rawInterest = capital.multiply(BigDecimal.valueOf(days))
+                .multiply(EAR.divide(BigDecimal.valueOf(100),4, RoundingMode.HALF_EVEN))
+                .divide(BigDecimal.valueOf(360),4, RoundingMode.HALF_EVEN);
 
         BigDecimal roundRawInterest = rawInterest.setScale(2, RoundingMode.HALF_EVEN);
 
-        BigDecimal rawRetention = roundRawInterest.multiply(BigDecimal.valueOf(2).divide(BigDecimal.valueOf(100)));
+        BigDecimal rawRetention = rawInterest.multiply(BigDecimal.valueOf(2).divide(BigDecimal.valueOf(100),4, RoundingMode.HALF_EVEN));
 
         BigDecimal roundRetention = rawRetention.setScale(2, RoundingMode.HALF_EVEN);
 

@@ -45,7 +45,7 @@ public class TransactionController {
 
         //return Utils.computeInterestSavingsAccount(BigDecimal.valueOf(40.00), BigDecimal.valueOf(5.75));
 
-        return Utils.computeInvestmentInterest(91, BigDecimal.valueOf(20000), BigDecimal.valueOf(2.52));
+        return Utils.computeSavingsAccountInterest(BigDecimal.valueOf(5000000), BigDecimal.valueOf(7.75));
     }
 
     @PostMapping

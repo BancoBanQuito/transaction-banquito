@@ -80,12 +80,13 @@ public class InterestController {
         }
     }
 
-    @GetMapping("/{codeLocalAccount}/{days}/{capital}/{ear}")
+    @GetMapping("investment/{codeLocalAccount}/{days}/{capital}/{ear}")
     public ResponseEntity<RSFormat> getInvestmentInterest(
             @PathVariable("codeLocalAccount") String codeLocalAccount,
             @PathVariable("days") Integer days,
             @PathVariable("capital") BigDecimal capital,
             @PathVariable("ear") BigDecimal ear) {
+
         try{
 
             if(Utils.isNullEmpty(codeLocalAccount)
