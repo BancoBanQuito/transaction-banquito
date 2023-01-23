@@ -4,12 +4,12 @@ import com.banquito.transaction.Utils.Messages;
 import com.banquito.transaction.Utils.RSCode;
 import com.banquito.transaction.Utils.RSFormat;
 import com.banquito.transaction.Utils.Utils;
-import com.banquito.transaction.controller.dto.RQStatus;
-import com.banquito.transaction.controller.dto.RQTransaction;
-import com.banquito.transaction.controller.dto.RSTransaction;
-import com.banquito.transaction.controller.mapper.TransactionMapper;
+import com.banquito.transaction.controller.dto.RQSavingsAccountInterest;
+import com.banquito.transaction.controller.dto.RSInvestmentInterest;
+import com.banquito.transaction.controller.dto.RSSavingsAccountInterest;
+import com.banquito.transaction.controller.mapper.InterestMapper;
 import com.banquito.transaction.exception.RSRuntimeException;
-import com.banquito.transaction.service.TransactionService;
+import com.banquito.transaction.service.InterestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,25 +18,26 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/transaction")
-public class TransactionController {
+@RequestMapping("/api/transaction/interest")
+public class InterestController {
 
-    private final TransactionService transactionService;
+    private final InterestService interestService;
 
-    public TransactionController(TransactionService transactionService) {
-        this.transactionService = transactionService;
+    public InterestController(InterestService interestService){
+        this.interestService = interestService;
     }
 
     @PostMapping
-    public ResponseEntity<RSFormat> createTransaction(@RequestBody RQTransaction transaction) {
+    public ResponseEntity<RSFormat> createSavingsAccountInterest(@RequestBody RQSavingsAccountInterest interest) {
         try{
 
-            if (!Utils.validRsTransaction(transaction)) {
+            if (!Utils.hasAllAttributes(interest)) {
                 return ResponseEntity.status(RSCode.BAD_REQUEST.code)
                         .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
             }
 
-            RSTransaction response = transactionService.createTransaction(TransactionMapper.map(transaction));
+            RSSavingsAccountInterest response = interestService.createSavingsAccountInterest(InterestMapper.map(interest));
+
             return ResponseEntity.status(RSCode.CREATED.code)
                     .body(RSFormat.builder().message("Success").data(response).build());
 
@@ -50,30 +51,7 @@ public class TransactionController {
         }
     }
 
-    @PutMapping("/{codeUniqueTransaction}")
-    public ResponseEntity<RSFormat> updateTransactionStatus(
-        @PathVariable("codeUniqueTransaction") String codeUniqueTransaction, 
-        @RequestBody RQStatus transactionStatus) {
-        try{
 
-            if(!Utils.hasAllAttributes(transactionStatus)||Utils.isNullEmpty(codeUniqueTransaction)){
-                return ResponseEntity.status(RSCode.BAD_REQUEST.code)
-                        .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
-            }
-
-            transactionService.updateTransactionStatus(codeUniqueTransaction, transactionStatus.getStatus());
-            return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data("Transaccion actualizada correctamente").build());
-
-        } catch(RSRuntimeException e){
-            return ResponseEntity.status(e.getCode())
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
-
-        } catch (Exception e){
-            return ResponseEntity.status(500)
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
-        }
-    }
 
     @GetMapping("/{codeLocalAccount}/{from}/{to}")
     public ResponseEntity<RSFormat> getTransactionBetween(
@@ -87,10 +65,48 @@ public class TransactionController {
                         .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
             }
 
-            List<RSTransaction> transactions = transactionService.getTransactionsBetweenDate(codeLocalAccount, from, to);
+            List<RSSavingsAccountInterest> interests = interestService.getInterestBetweenDates(codeLocalAccount, from, to);
 
             return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data(transactions).build());
+                    .body(RSFormat.builder().message("Success").data(interests).build());
+
+        } catch(RSRuntimeException e){
+            return ResponseEntity.status(e.getCode())
+                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+
+        } catch (Exception e){
+            return ResponseEntity.status(500)
+                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+        }
+    }
+
+    @GetMapping("investment/{codeLocalAccount}/{days}/{capital}/{ear}")
+    public ResponseEntity<RSFormat> getInvestmentInterest(
+            @PathVariable("codeLocalAccount") String codeLocalAccount,
+            @PathVariable("days") Integer days,
+            @PathVariable("capital") BigDecimal capital,
+            @PathVariable("ear") BigDecimal ear) {
+
+        try{
+
+            if(Utils.isNullEmpty(codeLocalAccount)
+                    ||Utils.isNullEmpty(days)
+                    ||Utils.isNullEmpty(capital)
+                    ||Utils.isNullEmpty(ear)){
+
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code)
+                        .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
+            }
+
+            RSInvestmentInterest response = interestService.getInvestmentInterest(
+                    codeLocalAccount,
+                    days,
+                    capital,
+                    ear
+            );
+
+            return ResponseEntity.status(RSCode.CREATED.code)
+                    .body(RSFormat.builder().message("Success").data(response).build());
 
         } catch(RSRuntimeException e){
             return ResponseEntity.status(e.getCode())
