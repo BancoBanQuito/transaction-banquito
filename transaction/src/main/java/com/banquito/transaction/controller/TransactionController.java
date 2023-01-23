@@ -27,27 +27,6 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    //This method is only used for development purposes
-    @GetMapping(value = "/test")
-    public Object test(){
-        /*AccountRequest accountRequest = new AccountRequest();
-        return accountRequest.getAccountData("dfd4f80f8f90f1136512",
-                "0b6edacd6a13797a079335ca502335a3ad");*/
-
-        /*return AccountRequest.updateAccountBalance(
-                "dfd4f80f8f90f1136512",
-                "0b6edacd6a13797a079335ca502335a3ad",
-                RQAccountBalance.builder()
-                        .presentBalance(new BigDecimal(20))
-                        .availableBalance(new BigDecimal(20))
-                        .build()
-        );*/
-
-        //return Utils.computeInterestSavingsAccount(BigDecimal.valueOf(40.00), BigDecimal.valueOf(5.75));
-
-        return Utils.computeSavingsAccountInterest(BigDecimal.valueOf(5000000), BigDecimal.valueOf(7.75));
-    }
-
     @PostMapping
     public ResponseEntity<RSFormat> createTransaction(@RequestBody RQTransaction transaction) {
         try{
