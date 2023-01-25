@@ -28,60 +28,50 @@ public class InterestController {
     }
 
     @PostMapping
-    public ResponseEntity<RSFormat> createSavingsAccountInterest(@RequestBody RQSavingsAccountInterest interest) {
+    public ResponseEntity<RSFormat<RSSavingsAccountInterest>> createSavingsAccountInterest(@RequestBody RQSavingsAccountInterest interest) {
         try{
 
             if (!Utils.hasAllAttributes(interest)) {
-                return ResponseEntity.status(RSCode.BAD_REQUEST.code)
-                        .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
             }
 
             RSSavingsAccountInterest response = interestService.createSavingsAccountInterest(InterestMapper.map(interest));
 
             return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data(response).build());
+                    .body(RSFormat.<RSSavingsAccountInterest>builder().message("Success").data(response).build());
 
-        } catch(RSRuntimeException e){
-            return ResponseEntity.status(e.getCode())
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
-
-        } catch (Exception e){
-            return ResponseEntity.status(500)
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+        } catch (RSRuntimeException e) {
+            return ResponseEntity.status(e.getCode()).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 
-
-
     @GetMapping("/{codeLocalAccount}/{from}/{to}")
-    public ResponseEntity<RSFormat> getTransactionBetween(
+    public ResponseEntity<RSFormat<List<RSSavingsAccountInterest>>> getTransactionBetween(
             @PathVariable("codeLocalAccount") String codeLocalAccount,
             @PathVariable("from") LocalDateTime from,
             @PathVariable("to") LocalDateTime to) {
         try{
 
             if(Utils.isNullEmpty(codeLocalAccount)||Utils.isNullEmpty(from)||Utils.isNullEmpty(to)){
-                return ResponseEntity.status(RSCode.BAD_REQUEST.code)
-                        .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
             }
 
             List<RSSavingsAccountInterest> interests = interestService.getInterestBetweenDates(codeLocalAccount, from, to);
 
             return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data(interests).build());
+                    .body(RSFormat.<List<RSSavingsAccountInterest>>builder().message("Success").data(interests).build());
 
-        } catch(RSRuntimeException e){
-            return ResponseEntity.status(e.getCode())
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
-
-        } catch (Exception e){
-            return ResponseEntity.status(500)
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+        } catch (RSRuntimeException e) {
+            return ResponseEntity.status(e.getCode()).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 
     @GetMapping("investment/{codeLocalAccount}/{days}/{capital}/{ear}")
-    public ResponseEntity<RSFormat> getInvestmentInterest(
+    public ResponseEntity<RSFormat<RSInvestmentInterest>> getInvestmentInterest(
             @PathVariable("codeLocalAccount") String codeLocalAccount,
             @PathVariable("days") Integer days,
             @PathVariable("capital") BigDecimal capital,
@@ -94,8 +84,7 @@ public class InterestController {
                     ||Utils.isNullEmpty(capital)
                     ||Utils.isNullEmpty(ear)){
 
-                return ResponseEntity.status(RSCode.BAD_REQUEST.code)
-                        .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
             }
 
             RSInvestmentInterest response = interestService.getInvestmentInterest(
@@ -106,15 +95,12 @@ public class InterestController {
             );
 
             return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data(response).build());
+                    .body(RSFormat.<RSInvestmentInterest>builder().message("Success").data(response).build());
 
-        } catch(RSRuntimeException e){
-            return ResponseEntity.status(e.getCode())
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
-
-        } catch (Exception e){
-            return ResponseEntity.status(500)
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+        } catch (RSRuntimeException e) {
+            return ResponseEntity.status(e.getCode()).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 

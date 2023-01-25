@@ -60,20 +60,18 @@ public class Utils {
         return result;
     }
 
-    public static Boolean validRsTransaction(RQTransaction rsTransaction){
+    public static Boolean validRqTransaction(RQTransaction transaction){
         Boolean flag = true;
 
-        if(isNullEmpty(rsTransaction.getMovement())){
+        if(isNullEmpty(transaction.getMovement())){
             flag = false;
-        }else if(isNullEmpty(rsTransaction.getType())){
+        }else if(isNullEmpty(transaction.getType())){
             flag = false;
-        }else if(isNullEmpty(rsTransaction.getCodeLocalAccount())){
+        }else if(isNullEmpty(transaction.getCodeLocalAccount())){
             flag = false;
-        }else if(isNullEmpty(rsTransaction.getCodeInternationalAccount())){
+        } else if(isNullEmpty(transaction.getConcept())){
             flag = false;
-        }else if(isNullEmpty(rsTransaction.getConcept())){
-            flag = false;
-        } else if(isNullEmpty(rsTransaction.getValue())){
+        } else if(isNullEmpty(transaction.getValue())){
             flag = false;
         }
 
