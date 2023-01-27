@@ -1,25 +1,33 @@
 package com.banquito.transaction.request;
 
+import com.banquito.transaction.Utils.Account;
 import com.banquito.transaction.Utils.Utils;
 import com.banquito.transaction.request.dto.RQAccountBalance;
 import com.banquito.transaction.request.dto.RSAccount;
 import com.banquito.transaction.request.dto.RSGeneric;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class AccountRequest {
 
+    private final Account accountProperties;
     private static RestTemplate restTemplate = new RestTemplate();
-    private static final String account = "http://localhost:9001/api/account";
 
-    public static RSAccount getAccountData(String codeLocalAccount, String codeInternationalAccount){
+    public AccountRequest(Account accountProperties) {
+        this.accountProperties = accountProperties;
+    }
 
-        String url = account.concat("/code/{codeLocalAccount}/{codeInternationalAccount}");
+
+    public RSAccount getAccountData(String codeLocalAccount, String codeInternationalAccount){
+
+        String url = accountProperties.getValue().concat("/code/{codeLocalAccount}/{codeInternationalAccount}");
 
         ResponseEntity<RSGeneric> response = restTemplate.getForEntity(
                 url,
@@ -36,10 +44,10 @@ public class AccountRequest {
                 return null;
     }
 
-    public static Boolean updateAccountBalance(String codeLocalAccount,
+    public Boolean updateAccountBalance(String codeLocalAccount,
                                               String codeInternationalAccount,
                                               RQAccountBalance rqAccountBalance){
-        String url = account.concat("/code/{codeLocalAccount}/{codeInternationalAccount}/balance");
+        String url = accountProperties.getValue().concat("/code/{codeLocalAccount}/{codeInternationalAccount}/balance");
 
         // create headers
         HttpHeaders headers = new HttpHeaders();

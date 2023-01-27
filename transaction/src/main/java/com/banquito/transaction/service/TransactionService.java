@@ -27,8 +27,12 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    private final AccountRequest accountRequest;
+
+    public TransactionService(TransactionRepository transactionRepository,
+                              AccountRequest accountRequest) {
         this.transactionRepository = transactionRepository;
+        this.accountRequest = accountRequest;
     }
 
     @Transactional
@@ -55,7 +59,7 @@ public class TransactionService {
         }
 
         //Get associated account
-        RSAccount account = AccountRequest
+        RSAccount account = accountRequest
                 .getAccountData(transaction.getCodeLocalAccount(), transaction.getCodeInternationalAccount());
 
         //Check if account exist
@@ -96,7 +100,7 @@ public class TransactionService {
         }
 
         //Send update request
-        Boolean update = AccountRequest.updateAccountBalance(
+        Boolean update = accountRequest.updateAccountBalance(
                 transaction.getCodeLocalAccount(),
                 transaction.getCodeInternationalAccount(),
                 RQAccountBalance.builder()
