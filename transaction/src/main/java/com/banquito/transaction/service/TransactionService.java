@@ -167,4 +167,23 @@ public class TransactionService {
 
         return transactions;
     }
+
+    public List<RSTransaction> getTransactionsByTypeBetweenDate(String codeLocalAccount,
+                                                                String type,
+                                                                LocalDateTime from,
+                                                                LocalDateTime to){
+        List<Transaction> dbTransactions = transactionRepository.findByCodeLocalAccountAndTypeAndExecuteDateBetween(
+                codeLocalAccount, type, from, to
+        );
+
+        List<RSTransaction> transactions = new ArrayList<>();
+        RSTransaction transaction;
+
+        for(Transaction dbTransaction: dbTransactions){
+            transaction = TransactionMapper.map(dbTransaction);
+            transactions.add(transaction);
+        }
+
+        return transactions;
+    }
 }

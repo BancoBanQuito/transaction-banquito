@@ -88,4 +88,32 @@ public class TransactionController {
         }
     }
 
+    @GetMapping("/{codeLocalAccount}/type/{type}/{from}/{to}")
+    public ResponseEntity<RSFormat<List<RSTransaction>>> getTransactionByTypeBetween(
+            @PathVariable("type") String type,
+            @PathVariable("codeLocalAccount") String codeLocalAccount,
+            @PathVariable("from") LocalDateTime from,
+            @PathVariable("to") LocalDateTime to) {
+        try{
+
+            if(Utils.isNullEmpty(type) || Utils.isNullEmpty(codeLocalAccount)||Utils.isNullEmpty(from)||Utils.isNullEmpty(to)){
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
+            }
+
+            if(!Utils.validTransactionType(type)){
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
+            }
+
+            List<RSTransaction> transactions = transactionService.getTransactionsByTypeBetweenDate
+                    (codeLocalAccount, type, from, to);
+
+            return ResponseEntity.status(RSCode.CREATED.code)
+                    .body(RSFormat.<List<RSTransaction>>builder().message("Success").data(transactions).build());
+
+        } catch (RSRuntimeException e) {
+            return ResponseEntity.status(e.getCode()).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
 }
