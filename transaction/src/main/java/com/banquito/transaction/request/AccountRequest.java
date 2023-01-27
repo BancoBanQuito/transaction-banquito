@@ -27,7 +27,7 @@ public class AccountRequest {
 
     public RSAccount getAccountData(String codeLocalAccount, String codeInternationalAccount){
 
-        String url = accountProperties.getValue().concat("/code/{codeLocalAccount}/{codeInternationalAccount}");
+        String url = accountProperties.getValue().concat("/code/{codeLocalAccount}");
 
         ResponseEntity<RSGeneric> response = restTemplate.getForEntity(
                 url,
@@ -47,7 +47,7 @@ public class AccountRequest {
     public Boolean updateAccountBalance(String codeLocalAccount,
                                               String codeInternationalAccount,
                                               RQAccountBalance rqAccountBalance){
-        String url = accountProperties.getValue().concat("/code/{codeLocalAccount}/{codeInternationalAccount}/balance");
+        String url = accountProperties.getValue().concat("/code/{codeLocalAccount}/balance");
 
         // create headers
         HttpHeaders headers = new HttpHeaders();
