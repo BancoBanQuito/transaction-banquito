@@ -32,8 +32,7 @@ public class AccountRequest {
         ResponseEntity<RSGeneric> response = restTemplate.getForEntity(
                 url,
                 RSGeneric.class,
-                codeLocalAccount,
-                codeInternationalAccount);
+                codeLocalAccount);
 
                 if(response.getStatusCode().is2xxSuccessful()){
                     if(Utils.hasAllAttributes(response.getBody())){
