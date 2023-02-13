@@ -22,8 +22,11 @@ jobs:
 
     - name: Build jar with Maven
       run: 
-        mvn compile --file transaction/pom.xml
-        mvn package --file transaction/pom.xml
+        mvn clean install --file transaction/pom.xml
+        #mvn package --file transaction/pom.xml
+
+    - name: Test with Maven
+      run: ls -l transaction/target
 
     - name: Create docker image
       run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }} .
