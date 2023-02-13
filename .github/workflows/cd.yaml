@@ -22,7 +22,7 @@ jobs:
 
     - name: Build jar with Maven
       run: 
-        mvn install clean --file transaction/pom.xml
+        mvn compile --file transaction/pom.xml
         mvn package --file transaction/pom.xml
 
     - name: Create docker image
