@@ -21,7 +21,9 @@ jobs:
         cache: 'maven'
 
     - name: Build jar with Maven
-      run: mvn package --file transaction/pom.xml
+      run: 
+        mvn clean install --file transaction/pom.xml
+        mvn package --file transaction/pom.xml
 
     - name: Create docker image
       run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }} .
