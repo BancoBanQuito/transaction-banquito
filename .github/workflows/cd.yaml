@@ -1,0 +1,49 @@
+name: Build and Test Spring Boot Project
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: 17
+        cache: 'maven'
+
+    - name: Build jar with Maven
+      run: 
+        mvn clean install --file transaction/pom.xml
+        #mvn package --file transaction/pom.xml
+
+    - name: Test with Maven
+      run: ls -l transaction/target
+
+    - name: Create docker image
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }} .
+
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+    - name: Push Docker Image
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }}
+
+    - name: Connect to EC2 instance using SSH recipe
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          docker stop transaction-banquito || true
+          docker rm transaction-banquito || true
+          docker run --rm -d --name transaction-banquito -p 81:9000 ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }}
