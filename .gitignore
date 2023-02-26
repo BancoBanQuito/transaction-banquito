@@ -1,8 +1,8 @@
 .vscode/
 .idea/
 .mvn/
-**/.mvn/
-**/.idea/
+#**/.mvn/
+#**/.idea/
 **/.vscode/
 
 target
@@ -14,6 +14,7 @@ target/
 *.class
 
 # Log file
+log/
 *.log
 
 # BlueJ files
@@ -23,7 +24,7 @@ target/
 .mtj.tmp/
 
 # Package Files #
-*.jar
+#*.jar
 *.war
 *.nar
 *.ear
