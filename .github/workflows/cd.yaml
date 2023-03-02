@@ -3,7 +3,7 @@ name: Build and Test Spring Boot Project
 on:
   push:
     branches:
-      - main
+      - CD-transaction
 
 jobs:
   build:
