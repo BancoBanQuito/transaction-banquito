@@ -29,13 +29,13 @@ jobs:
       run: ls -l transaction/target
 
     - name: Create docker image
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }} .
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:latest .
 
     - name: Login to Docker Hub
       run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
     - name: Push Docker Image
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }}
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:latest
 
     - name: Connect to EC2 instance using SSH recipe
       uses: appleboy/ssh-action@master
@@ -46,4 +46,4 @@ jobs:
         script: |
           docker stop transaction-banquito || true
           docker rm transaction-banquito || true
-          docker run --rm -d --name transaction-banquito -p 81:9000 ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }}
+          docker run --rm -d --name transaction-banquito -p 80:80 ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:latest
