@@ -46,4 +46,4 @@ jobs:
         script: |
           docker stop transaction-banquito || true
           docker rm transaction-banquito || true
-          docker run --rm -d --name transaction-banquito -p 77:77 ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }}
+          docker run --rm -d --name transaction-banquito -p 76:76 ${{ secrets.DOCKERHUB_USERNAME }}/transaction-banquito:${{ github.sha }}
