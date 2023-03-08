@@ -11,5 +11,5 @@ import java.util.List;
 public interface InterestRepository extends MongoRepository<Interest, String> {
 
     @Query("{'codeLocalAccount': ?0,'executeDate' : { $gt: ?1, $lt: ?2 } }")
-    List<Interest> findByCodeLocalAccountAndExecuteDateBetween(String name, LocalDateTime from, LocalDateTime to);
+    List<Interest> findByCodeLocalAccountAndExecuteDateBetween(String codeLocalAccount, LocalDateTime from, LocalDateTime to);
 }

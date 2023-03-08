@@ -19,6 +19,8 @@ public class RQSavingsAccountInterest {
 
     private BigDecimal ear;
 
+    private Integer baseCalc;
+
     private BigDecimal availableBalance;
 
 }

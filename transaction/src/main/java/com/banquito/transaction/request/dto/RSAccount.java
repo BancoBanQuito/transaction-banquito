@@ -14,6 +14,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class RSAccount implements Serializable {
 
+    private String identificationType;
+
+    private String identification;
+
     private String codeLocalAccount;
 
     private String codeInternationalAccount;

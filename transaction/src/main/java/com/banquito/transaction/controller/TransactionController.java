@@ -1,6 +1,5 @@
 package com.banquito.transaction.controller;
 
-import com.banquito.transaction.Utils.Messages;
 import com.banquito.transaction.Utils.RSCode;
 import com.banquito.transaction.Utils.RSFormat;
 import com.banquito.transaction.Utils.Utils;
@@ -13,7 +12,6 @@ import com.banquito.transaction.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,78 +26,94 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<RSFormat> createTransaction(@RequestBody RQTransaction transaction) {
+    public ResponseEntity<RSFormat<RSTransaction>> createTransaction(@RequestBody RQTransaction transaction) {
         try{
 
-            if (!Utils.validRsTransaction(transaction)) {
-                return ResponseEntity.status(RSCode.BAD_REQUEST.code)
-                        .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
+            if (!Utils.validRqTransaction(transaction)) {
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
             }
 
             RSTransaction response = transactionService.createTransaction(TransactionMapper.map(transaction));
             return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data(response).build());
+                    .body(RSFormat.<RSTransaction>builder().message("Success").data(response).build());
 
-        } catch(RSRuntimeException e){
-            return ResponseEntity.status(e.getCode())
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
-
-        } catch (Exception e){
-            return ResponseEntity.status(500)
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+        } catch (RSRuntimeException e) {
+            return ResponseEntity.status(e.getCode()).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 
     @PutMapping("/{codeUniqueTransaction}")
-    public ResponseEntity<RSFormat> updateTransactionStatus(
+    public ResponseEntity<RSFormat<String>> updateTransactionStatus(
         @PathVariable("codeUniqueTransaction") String codeUniqueTransaction, 
         @RequestBody RQStatus transactionStatus) {
         try{
 
             if(!Utils.hasAllAttributes(transactionStatus)||Utils.isNullEmpty(codeUniqueTransaction)){
-                return ResponseEntity.status(RSCode.BAD_REQUEST.code)
-                        .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
             }
 
             transactionService.updateTransactionStatus(codeUniqueTransaction, transactionStatus.getStatus());
             return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data("Transaccion actualizada correctamente").build());
+                    .body(RSFormat.<String>builder().message("Success").data("Transaccion actualizada correctamente").build());
 
-        } catch(RSRuntimeException e){
-            return ResponseEntity.status(e.getCode())
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
-
-        } catch (Exception e){
-            return ResponseEntity.status(500)
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+        } catch (RSRuntimeException e) {
+            return ResponseEntity.status(e.getCode()).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 
     @GetMapping("/{codeLocalAccount}/{from}/{to}")
-    public ResponseEntity<RSFormat> getTransactionBetween(
+    public ResponseEntity<RSFormat<List<RSTransaction>>> getTransactionBetween(
             @PathVariable("codeLocalAccount") String codeLocalAccount,
             @PathVariable("from") LocalDateTime from,
             @PathVariable("to") LocalDateTime to) {
         try{
 
             if(Utils.isNullEmpty(codeLocalAccount)||Utils.isNullEmpty(from)||Utils.isNullEmpty(to)){
-                return ResponseEntity.status(RSCode.BAD_REQUEST.code)
-                        .body(RSFormat.builder().message("Failure").data(Messages.MISSING_PARAMS).build());
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
             }
 
             List<RSTransaction> transactions = transactionService.getTransactionsBetweenDate(codeLocalAccount, from, to);
 
             return ResponseEntity.status(RSCode.CREATED.code)
-                    .body(RSFormat.builder().message("Success").data(transactions).build());
+                    .body(RSFormat.<List<RSTransaction>>builder().message("Success").data(transactions).build());
 
-        } catch(RSRuntimeException e){
-            return ResponseEntity.status(e.getCode())
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
-
-        } catch (Exception e){
-            return ResponseEntity.status(500)
-                    .body(RSFormat.builder().message("Failure").data(e.getMessage()).build());
+        } catch (RSRuntimeException e) {
+            return ResponseEntity.status(e.getCode()).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 
+    @GetMapping("/{codeLocalAccount}/type/{type}/{from}/{to}")
+    public ResponseEntity<RSFormat<List<RSTransaction>>> getTransactionByTypeBetween(
+            @PathVariable("type") String type,
+            @PathVariable("codeLocalAccount") String codeLocalAccount,
+            @PathVariable("from") LocalDateTime from,
+            @PathVariable("to") LocalDateTime to) {
+        try{
+
+            if(Utils.isNullEmpty(type) || Utils.isNullEmpty(codeLocalAccount)||Utils.isNullEmpty(from)||Utils.isNullEmpty(to)){
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
+            }
+
+            if(!Utils.validTransactionType(type)){
+                return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
+            }
+
+            List<RSTransaction> transactions = transactionService.getTransactionsByTypeBetweenDate
+                    (codeLocalAccount, type, from, to);
+
+            return ResponseEntity.status(RSCode.CREATED.code)
+                    .body(RSFormat.<List<RSTransaction>>builder().message("Success").data(transactions).build());
+
+        } catch (RSRuntimeException e) {
+            return ResponseEntity.status(e.getCode()).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
 }
