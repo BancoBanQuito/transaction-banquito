@@ -29,11 +29,11 @@ public class InterestService {
         this.interestRepository = interestRepository;
     }
 
-    public RSSavingsAccountInterest createSavingsAccountInterest(Interest interest) {
+    public RSSavingsAccountInterest createSavingsAccountInterest(Interest interest, Integer baseCalc) {
 
         //Validate account is not needed since this operation is automatic in the account module, hence it will
         //get the data directly from the DB
-        BigDecimal value = Utils.computeSavingsAccountInterest(interest.getAvailableBalance(), interest.getEar());
+        BigDecimal value = Utils.computeSavingsAccountInterest(interest.getAvailableBalance(), interest.getEar(), baseCalc);
 
         //Generated interest must be at least 1 cent
         if (value.compareTo(BigDecimal.valueOf(0.01)) == -1) {

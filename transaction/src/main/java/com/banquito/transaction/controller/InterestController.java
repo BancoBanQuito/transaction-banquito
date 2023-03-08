@@ -35,7 +35,9 @@ public class InterestController {
                 return ResponseEntity.status(RSCode.BAD_REQUEST.code).build();
             }
 
-            RSSavingsAccountInterest response = interestService.createSavingsAccountInterest(InterestMapper.map(interest));
+            RSSavingsAccountInterest response = interestService.createSavingsAccountInterest(
+                    InterestMapper.map(interest),
+                    interest.getBaseCalc());
 
             return ResponseEntity.status(RSCode.CREATED.code)
                     .body(RSFormat.<RSSavingsAccountInterest>builder().message("Success").data(response).build());

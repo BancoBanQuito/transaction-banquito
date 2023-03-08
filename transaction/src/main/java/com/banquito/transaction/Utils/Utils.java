@@ -153,11 +153,11 @@ public class Utils {
     //EAR stands for Effective Annual Rate (Tasa efectiva anual)
     //DR  stands for Daily Rate (Tasa diaria)
     //Use double, becuase BigDecimal doesn't support power operation
-    public static BigDecimal computeSavingsAccountInterest(BigDecimal balance, BigDecimal EAR){
+    public static BigDecimal computeSavingsAccountInterest(BigDecimal balance, BigDecimal EAR, Integer baseCalc){
 
         Double base = 1d + EAR.doubleValue()/100d;
 
-        Double exponent = 1d/360d;
+        Double exponent = 1d/baseCalc;
 
         BigDecimal dr = balance.multiply(BigDecimal.valueOf(Math.pow(base, exponent) - 1d));
         return dr.setScale(2, RoundingMode.HALF_EVEN);
