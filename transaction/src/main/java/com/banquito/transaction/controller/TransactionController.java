@@ -38,8 +38,10 @@ public class TransactionController {
                     .body(RSFormat.<RSTransaction>builder().message("Success").data(response).build());
 
         } catch (RSRuntimeException e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(e.getCode()).build();
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
